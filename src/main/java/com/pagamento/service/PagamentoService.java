@@ -70,4 +70,20 @@ public class PagamentoService {
                 .filter(pagamento -> pagamento.getStatus().equals(Pagamento.Status.PENDENTE))
                 .subscribeOn(Schedulers.boundedElastic());
     }
+
+    public Mono<Pagamento> concluir(String id) {
+        log.info("Inciando atualizacao de pagamento - {}", id);
+
+        return Mono.defer(() -> {
+            log.info("Concluindo pagamento - {}", id);
+            var pagamento = repository.get(id);
+            pagamento.ifPresent(pg -> {
+                pg.setStatus(Pagamento.Status.CONCLUIDO);
+                pg.setDataModificacao(Instant.now());
+                repository.save(id, pg);
+            });
+
+            return Mono.justOrEmpty(pagamento);
+        }).subscribeOn(Schedulers.boundedElastic());
+    }
 }
