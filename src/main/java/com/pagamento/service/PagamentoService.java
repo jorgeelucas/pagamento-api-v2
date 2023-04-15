@@ -75,7 +75,6 @@ public class PagamentoService {
         log.info("Inciando atualizacao de pagamento - {}", id);
 
         return Mono.defer(() -> {
-            log.info("Concluindo pagamento - {}", id);
             var pagamento = repository.get(id);
             pagamento.ifPresent(pg -> {
                 pg.setStatus(Pagamento.Status.CONCLUIDO);
